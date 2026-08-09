@@ -15,7 +15,7 @@
 
     <!-- Project Information -->
     <name>ktestify-plugin-http</name>
-    <description>KTestify plugin  -  synchronous HTTP request/response transport and Cucumber step definitions</description>
+    <description>KTestify plugin synchronous HTTP request/response transport and Cucumber step definitions</description>
     <url>https://github.com/ktestify/ktestify-plugin-http</url>
     <inceptionYear>2026</inceptionYear>
 
@@ -56,14 +56,8 @@
         <dependency>
             <groupId>io.github.ktestify</groupId>
             <artifactId>ktestify-core</artifactId>
-            <version>1.1.1-SNAPSHOT</version>
+            <version>1.1.1</version>
         </dependency>
-
-        <!--
-            No transport-specific runtime dependency is required.
-            java.net.http.HttpClient is JDK-native (already the established
-            idiom in ktestify-plugin-notifications' WebhookNotificationChannel).
-        -->
 
         <!-- ===================================== -->
         <!-- Cucumber (step definitions)           -->
@@ -138,7 +132,6 @@
         <finalName>${project.build.finalName}</finalName>
 
         <plugins>
-            <!-- Surefire  -  unit tests (smaller heap than parent default) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
