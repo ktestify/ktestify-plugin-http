@@ -23,7 +23,7 @@ import io.github.ktestify.config.KtestifyConfig;
 import java.util.Map;
 import org.junit.jupiter.api.*;
 
-/** Unit tests for {@link HttpConfig}  -  HOCON parsing and timeout / TLS defaults. */
+/** Unit tests for {@link HttpConfig} - HOCON parsing and timeout / TLS defaults. */
 @DisplayName("HttpConfig")
 class HttpConfigTest {
 

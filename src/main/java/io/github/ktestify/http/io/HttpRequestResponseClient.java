@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  * {@code WebhookNotificationChannel} does in {@code ktestify-plugin-notifications}.
  *
  * <p>A single instance wraps one connection-pooled {@link HttpClient} and is meant to be created once per scenario (see
- * {@link io.github.ktestify.http.steps.SharedHttpResources}), not per request  -  see the client lifecycle note on
+ * {@link io.github.ktestify.http.steps.SharedHttpResources}), not per request - see the client lifecycle note on
  * {@link io.github.ktestify.io.core.AbstractSynchronousConsumer}.
  *
  * <h2>ConsumedRecord field mapping</h2>

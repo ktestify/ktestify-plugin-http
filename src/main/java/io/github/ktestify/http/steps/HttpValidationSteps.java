@@ -19,8 +19,8 @@ package io.github.ktestify.http.steps;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import io.github.ktestify.http.io.HttpConsumer;
 import io.github.ktestify.http.entities.KtestifyHttpEndpoint;
+import io.github.ktestify.http.io.HttpConsumer;
 import io.github.ktestify.http.io.HttpConsumerContext;
 import io.github.ktestify.http.io.HttpRequestResponseClient;
 import io.github.ktestify.http.io.HttpRequestSpec;
@@ -40,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
  * Cucumber {@code @Then} and {@code @And} step definitions for HTTP validations.
  *
  * <p>All body and attribute assertions are performed with unchanged, existing {@code ktestify-core} matchers
- * ({@link RecordMatcherFactory})  -  this class contains zero HTTP-specific matching logic (see §5.5 of the design
+ * ({@link RecordMatcherFactory}) - this class contains zero HTTP-specific matching logic (see §5.5 of the design
  * document). The only exception is the header assertion, a direct String comparison since header expectations are not
  * modeled as {@link io.github.ktestify.models.ConsumedRecord#getAttributes()}.
  *
@@ -162,7 +162,7 @@ public class HttpValidationSteps {
      * Repeatedly calls an endpoint until it returns the expected status code, or the read timeout elapses.
      *
      * <p>Backed by {@link PollingRequestResponseClient} wrapping the scenario's shared
-     * {@link HttpRequestResponseClient}  -  no bespoke polling loop is implemented in this class.
+     * {@link HttpRequestResponseClient} - no bespoke polling loop is implemented in this class.
      *
      * <p>DataTable columns: {@code endpointAlias}, {@code method}, {@code path}, {@code expectedStatus},
      * {@code readTimeout} (seconds).

@@ -52,7 +52,7 @@ public class SharedHttpResources {
 
     /**
      * One shared, connection-pooled {@link HttpRequestResponseClient} reused for every request in the scenario. Not
-     * created and discarded per request  -  see the client lifecycle note on {@code AbstractSynchronousConsumer}.
+     * created and discarded per request - see the client lifecycle note on {@code AbstractSynchronousConsumer}.
      */
     public final HttpRequestResponseClient client;
 

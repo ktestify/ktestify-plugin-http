@@ -26,8 +26,7 @@ import lombok.Value;
  * Immutable context object that configures an {@link HttpConsumerContext}-driven call.
  *
  * <p>Mirrors the design of {@code AzureBlobConsumerContext} in {@code ktestify-plugin-azureblob}: a pure value object
- * built by the step layer ({@code io.github.ktestify.http.steps}) and consumed by
- * {@link HttpConsumer}.
+ * built by the step layer ({@code io.github.ktestify.http.steps}) and consumed by {@link HttpConsumer}.
  *
  * @since 0.1.0
  * @see HttpConsumer
@@ -40,7 +39,7 @@ public class HttpConsumerContext {
     HttpRequestSpec request;
 
     /**
-     * Match method  -  same constants as {@code RecordMatcherFactory.METHOD_*} (e.g. {@code "methodMatchFile"},
+     * Match method - same constants as {@code RecordMatcherFactory.METHOD_*} (e.g. {@code "methodMatchFile"},
      * {@code "methodMatchAttributes"}). May be {@code null} to skip content comparison.
      */
     String matchMethod;

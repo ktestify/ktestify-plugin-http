@@ -25,9 +25,9 @@ import lombok.Value;
  * Immutable request description consumed by {@link HttpRequestResponseClient}.
  *
  * <p>This is the {@code Req} type parameter of
- * {@link io.github.ktestify.io.core.RequestResponseClient}{@code <HttpRequestSpec, String>}  -  the sole input required
- * to send one HTTP request. Built by {@link HttpConsumer#buildRequest()} from a per-call
- * context, never constructed directly by step definitions.
+ * {@link io.github.ktestify.io.core.RequestResponseClient}{@code <HttpRequestSpec, String>} - the sole input required
+ * to send one HTTP request. Built by {@link HttpConsumer#buildRequest()} from a per-call context, never constructed
+ * directly by step definitions.
  *
  * @since 0.1.0
  * @see HttpRequestResponseClient

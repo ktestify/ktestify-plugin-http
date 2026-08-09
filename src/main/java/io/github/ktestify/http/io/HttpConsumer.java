@@ -29,11 +29,11 @@ import java.util.Collections;
  * <p>Follows the same three-layer separation as every other ktestify transport:
  *
  * <ol>
- *   <li><b>Transport</b>  -  {@link io.github.ktestify.http.io.HttpRequestResponseClient}: sends the request and receives
+ *   <li><b>Transport</b> - {@link io.github.ktestify.http.io.HttpRequestResponseClient}: sends the request and receives
  *       the response.
- *   <li><b>Orchestration</b>  -  this class: wires request → execute → match → result, inherited entirely from
+ *   <li><b>Orchestration</b> - this class: wires request → execute → match → result, inherited entirely from
  *       {@link AbstractSynchronousConsumer}.
- *   <li><b>Assertion</b>  -  {@link RecordMatcher} implementation selected by {@code matchMethod}, reused unchanged from
+ *   <li><b>Assertion</b> - {@link RecordMatcher} implementation selected by {@code matchMethod}, reused unchanged from
  *       {@code ktestify-core} (no HTTP-specific matcher code).
  * </ol>
  *

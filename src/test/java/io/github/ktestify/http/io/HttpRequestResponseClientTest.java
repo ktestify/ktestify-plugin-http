@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for {@link HttpRequestResponseClient} against a local {@link HttpServer} loopback instance (no Docker, no
- * external network access  -  fast and hermetic).
+ * external network access - fast and hermetic).
  */
 @DisplayName("HttpRequestResponseClient")
 class HttpRequestResponseClientTest {

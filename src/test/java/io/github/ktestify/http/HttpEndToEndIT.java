@@ -46,7 +46,7 @@ import org.junit.jupiter.api.io.TempDir;
  * End-to-end integration test exercising the full HTTP plugin stack (background → action → validation steps) against a
  * real {@link HttpServer} loopback instance, exactly the scenario described in §5.4 of the design document.
  *
- * <p>No Docker / Testcontainers dependency is required  -  {@code com.sun.net.httpserver.HttpServer} is JDK-native and
+ * <p>No Docker / Testcontainers dependency is required - {@code com.sun.net.httpserver.HttpServer} is JDK-native and
  * gives a fast, hermetic local HTTP endpoint to test against.
  */
 @DisplayName("HTTP plugin  -  end to end")

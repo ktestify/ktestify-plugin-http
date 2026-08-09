@@ -64,7 +64,7 @@ public final class HttpConfig {
 
     /**
      * When {@code true}, TLS certificate validation is disabled for the underlying client. Explicit opt-in only,
-     * intended for local / development endpoints  -  never enable in CI against real environments.
+     * intended for local / development endpoints - never enable in CI against real environments.
      */
     private final boolean trustAllCertificates;
 

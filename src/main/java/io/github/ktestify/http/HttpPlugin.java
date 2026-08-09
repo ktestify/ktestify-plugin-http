@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
  * <h2>What this plugin provides</h2>
  *
  * <ul>
- *   <li>A transport layer  -  {@link io.github.ktestify.http.io.HttpRequestResponseClient}  -  built entirely on
+ *   <li>A transport layer - {@link io.github.ktestify.http.io.HttpRequestResponseClient} - built entirely on
  *       {@code ktestify-core}'s {@link io.github.ktestify.io.core.RequestResponseClient} contract, wrapping
  *       {@code java.net.http.HttpClient}.
- *   <li>Cucumber step definitions in {@code io.github.ktestify.http.steps}  -  auto-injected as a {@code --glue} package
+ *   <li>Cucumber step definitions in {@code io.github.ktestify.http.steps} - auto-injected as a {@code --glue} package
  *       by the ktestify runtime.
  * </ul>
  *
@@ -60,7 +60,7 @@ public final class HttpPlugin implements KtestifyPlugin {
     private static final String PLUGIN_AUTHOR_EMAIL = "malhomme.nil+oss@icloud.com";
     private static final String GLUE_PACKAGE = "io.github.ktestify.http.steps";
 
-    /** Cached config  -  populated during {@link #initialize(PluginContext)}. */
+    /** Cached config - populated during {@link #initialize(PluginContext)}. */
     private HttpConfig config;
 
     // -------------------------------------------------------------------------
@@ -142,7 +142,7 @@ public final class HttpPlugin implements KtestifyPlugin {
         }
     }
 
-    /** No-op shutdown  -  {@code java.net.http.HttpClient} manages its own connection pool lifecycle. */
+    /** No-op shutdown - {@code java.net.http.HttpClient} manages its own connection pool lifecycle. */
     @Override
     public void shutdown() {
         LOG.info("HTTP plugin shut down.");

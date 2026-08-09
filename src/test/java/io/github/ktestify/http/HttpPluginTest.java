@@ -23,7 +23,7 @@ import io.github.ktestify.plugin.PluginContext;
 import org.junit.jupiter.api.*;
 
 /**
- * Unit tests for {@link HttpPlugin}  -  lifecycle, metadata, and configuration validation.
+ * Unit tests for {@link HttpPlugin} - lifecycle, metadata, and configuration validation.
  *
  * <p>These tests do not perform any real HTTP call; they only exercise config loading and plugin contract methods.
  */

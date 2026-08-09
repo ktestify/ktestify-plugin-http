@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
  * }</pre>
  *
  * <p>{@code {{ENV:API_TOKEN}}} and any other registered dynamic variable is resolved via
- * {@link DynamicVariableProcessor}, ktestify-core's existing templating system  -  no new templating is introduced by
+ * {@link DynamicVariableProcessor}, ktestify-core's existing templating system - no new templating is introduced by
  * this plugin.
  *
  * @since 0.1.0

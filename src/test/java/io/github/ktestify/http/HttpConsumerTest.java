@@ -38,7 +38,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Unit tests for {@link HttpConsumer}  -  verifies it correctly wires {@link HttpConsumerContext} into
+ * Unit tests for {@link HttpConsumer} - verifies it correctly wires {@link HttpConsumerContext} into
  * {@link io.github.ktestify.io.core.AbstractSynchronousConsumer}'s buildRequest/buildMatchContext extension points,
  * using a mocked {@link RequestResponseClient} so no real HTTP call is performed.
  */
