@@ -1,0 +1,36 @@
+# ============================================================
+# Changelog  -  auto-update CHANGELOG.md on every merge to main
+#
+# Uses git-cliff (https://git-cliff.org) with the project's
+# cliff.toml to generate a conventional-commit changelog.
+#
+# The generated CHANGELOG.md is committed directly to main
+# so it is always up-to-date without any manual step.
+#
+# A dry-run preview is also generated on pull_request events
+# and uploaded as an artifact for reviewers to inspect.
+# ============================================================
+name: Changelog
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "CHANGELOG.md"
+      - "**.md"
+      - "LICENSE"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "CHANGELOG.md"
+      - "LICENSE"
+
+jobs:
+  changelog:
+    permissions:
+      contents: write        # update-changelog job pushes CHANGELOG.md commits via checkout
+      pull-requests: write   # preview-changelog job posts/updates the PR comment
+    uses: ktestify/.github/.github/workflows/reusable-changelog.yml@main
+    secrets:
+      KTESTIFY_CHANGELOG_PAT: ${{ secrets.KTESTIFY_CHANGELOG_PAT }}
+

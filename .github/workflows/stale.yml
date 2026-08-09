@@ -1,0 +1,31 @@
+# ============================================================
+# Stale Issues & Pull Requests
+#
+# Automatically labels and closes inactive items to keep the
+# backlog clean:
+#
+#   Issues  → stale after 60 days without activity
+#             closed after a further 14 days of silence
+#
+#   PRs     → stale after 30 days without activity
+#             closed after a further 7 days of silence
+#
+# Items pinned or labelled `keep-open` / `security` are exempt.
+# ============================================================
+name: Stale
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+on:
+  schedule:
+    # Run at 01:00 UTC every day
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+
+jobs:
+  stale:
+    uses: ktestify/.github/.github/workflows/reusable-stale.yml@main
+

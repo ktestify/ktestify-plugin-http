@@ -1,0 +1,45 @@
+# ============================================================
+# Release  -  Publish ktestify-plugin-http to Maven Central
+#
+# Select a bump type  -  the reusable workflow calculates
+# the release version and next SNAPSHOT automatically.
+# ============================================================
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump-type:
+        description: "Version bump type"
+        required: true
+        type: choice
+        options:
+          - bugfix
+          - minor
+          - major
+          - release-candidate
+      dry-run:
+        description: "Dry run  -  build & sign but skip publish, tag & GitHub Release"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    uses: ktestify/.github/.github/workflows/reusable-maven-release.yml@main
+    with:
+      bump-type: ${{ inputs.bump-type }}
+      dry-run: ${{ inputs.dry-run }}
+      release-name-prefix: "ktestify-plugin-http"
+      update-readme-badge: true
+      release-artifacts: |
+        target/ktestify-plugin-http.jar
+        target/ktestify-plugin-http-sources.jar
+        target/ktestify-plugin-http-javadoc.jar
+    secrets:
+      KTESTIFY_CHANGELOG_PAT: ${{ secrets.KTESTIFY_CHANGELOG_PAT }}
+      CENTRAL_USERNAME: ${{ secrets.CENTRAL_USERNAME }}
+      CENTRAL_PASSWORD: ${{ secrets.CENTRAL_PASSWORD }}
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+

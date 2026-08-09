@@ -1,0 +1,12 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussion / Q&A
+    url: https://github.com/ktestify/ktestify-plugin-http/discussions
+    about: Ask questions, share ideas, or start a discussion.
+  - name: 📖 Documentation
+    url: https://github.com/ktestify/ktestify-plugin-http/blob/main/README.md
+    about: Read the full ktestify-plugin-http documentation.
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/ktestify/ktestify-plugin-http/security/advisories/new
+    about: Report a security vulnerability privately (do NOT open a public issue).
+

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.ktestify</groupId>
+        <artifactId>ktestify-parent</artifactId>
+        <version>1.0.2</version>
+    </parent>
+
+    <!-- Project Coordinates -->
+    <artifactId>ktestify-plugin-http</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <!-- Project Information -->
+    <name>ktestify-plugin-http</name>
+    <description>KTestify plugin  -  synchronous HTTP request/response transport and Cucumber step definitions</description>
+    <url>https://github.com/ktestify/ktestify-plugin-http</url>
+    <inceptionYear>2026</inceptionYear>
+
+    <!-- Licenses -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- Developers -->
+    <developers>
+        <developer>
+            <id>nil-malh</id>
+            <name>Nil MALHOMME</name>
+            <email>malhomme.nil+oss@icloud.com</email>
+        </developer>
+    </developers>
+
+    <!-- SCM Information -->
+    <scm>
+        <connection>scm:git:git://github.com/ktestify/ktestify-plugin-http.git</connection>
+        <developerConnection>scm:git:ssh://github.com:ktestify/ktestify-plugin-http.git</developerConnection>
+        <url>https://github.com/ktestify/ktestify-plugin-http/tree/main</url>
+    </scm>
+
+    <properties>
+        <!-- Module-specific properties (all others inherited from ktestify-parent) -->
+        <project.build.finalName>ktestify-plugin-http</project.build.finalName>
+    </properties>
+
+    <dependencies>
+        <!-- ===================================== -->
+        <!-- ktestify-core (the API / SPI)         -->
+        <!-- ===================================== -->
+        <dependency>
+            <groupId>io.github.ktestify</groupId>
+            <artifactId>ktestify-core</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+        </dependency>
+
+        <!--
+            No transport-specific runtime dependency is required.
+            java.net.http.HttpClient is JDK-native (already the established
+            idiom in ktestify-plugin-notifications' WebhookNotificationChannel).
+        -->
+
+        <!-- ===================================== -->
+        <!-- Cucumber (step definitions)           -->
+        <!-- ===================================== -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+        </dependency>
+
+        <!-- ===================================== -->
+        <!-- Boilerplate reduction                 -->
+        <!-- ===================================== -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- ===================================== -->
+        <!-- Logging                               -->
+        <!-- ===================================== -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- ===================================== -->
+        <!-- Test Dependencies                     -->
+        <!-- ===================================== -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+        </dependency>
+
+        <!-- Log4j2 for tests -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.build.finalName}</finalName>
+
+        <plugins>
+            <!-- Surefire  -  unit tests (smaller heap than parent default) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -Xmx512m -XX:+EnableDynamicAgentLoading</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
