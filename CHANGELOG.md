@@ -2,7 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.0] — 2026-09-20
+
 ###  Miscellaneous
 
 - Update project description and dependency version in pom.xml — [@nil-malh](https://github.com/nil-malh)
