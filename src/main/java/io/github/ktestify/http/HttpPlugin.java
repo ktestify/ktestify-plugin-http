@@ -21,6 +21,7 @@ import io.github.ktestify.exceptions.PluginException;
 import io.github.ktestify.http.config.HttpConfig;
 import io.github.ktestify.plugin.KtestifyPlugin;
 import io.github.ktestify.plugin.PluginContext;
+import io.github.ktestify.plugin.PluginVersionResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public final class HttpPlugin implements KtestifyPlugin {
     private static final Logger LOG = LoggerFactory.getLogger(HttpPlugin.class);
 
     private static final String PLUGIN_ID = "http";
-    private static final String PLUGIN_VERSION = "0.1.0-SNAPSHOT";
+    private static final String PLUGIN_VERSION = PluginVersionResolver.resolve(HttpPlugin.class, "dev");
     private static final String PLUGIN_AUTHOR_NAME = "Nil MALHOMME";
     private static final String PLUGIN_AUTHOR_EMAIL = "malhomme.nil+oss@icloud.com";
     private static final String GLUE_PACKAGE = "io.github.ktestify.http.steps";
@@ -117,19 +118,19 @@ public final class HttpPlugin implements KtestifyPlugin {
      */
     @Override
     public void initialize(PluginContext context) {
-        LOG.info("Initializing ktestify HTTP plugin v{}…", PLUGIN_VERSION);
+        LOG.info("Initializing plugin v{}…", PLUGIN_VERSION);
 
         Config raw = context.getConfig().getRaw();
         if (!raw.hasPath("ktestify.plugins.http")) {
-            throw new PluginException("HTTP plugin: missing HOCON section 'ktestify.plugins.http'. "
+            throw new PluginException("Missing HOCON section 'ktestify.plugins.http'. "
                     + "Ensure the plugin JAR (with its reference.conf) is on the classpath.");
         }
 
         this.config = HttpConfig.from(raw);
 
         LOG.info(
-                "HTTP plugin initialized  -  connect-timeout={}ms, read-timeout={}ms, poll-interval={}ms, "
-                        + "follow-redirects={}, trust-all-certificates={}.",
+                "Plugin initialized (config: connect-timeout={}ms, read-timeout={}ms, poll-interval={}ms, "
+                        + "follow-redirects={}, trust-all-certificates={}).",
                 config.getConnectTimeoutMs(),
                 config.getReadTimeoutMs(),
                 config.getPollIntervalMs(),
@@ -137,8 +138,7 @@ public final class HttpPlugin implements KtestifyPlugin {
                 config.isTrustAllCertificates());
 
         if (config.isTrustAllCertificates()) {
-            LOG.warn("HTTP plugin: 'tls.trust-all' is enabled  -  TLS certificate validation is disabled. "
-                    + "Use only against local/dev endpoints, never in CI against real environments.");
+            LOG.warn("Config 'tls.trust-all' is enabled, therefore TLS certificate validation is disabled.");
         }
     }
 
