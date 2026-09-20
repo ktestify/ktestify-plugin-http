@@ -15,7 +15,6 @@ All notable changes to this project will be documented in this file.
 
 ###  New Contributors
 
-- @nil-malh made their first contribution in [#3](https://github.com/ktestify/ktestify-plugin-http/pull/3)
 
 
 
