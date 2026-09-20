@@ -8,8 +8,14 @@ All notable changes to this project will be documented in this file.
 - Update project description and dependency version in pom.xml — [@nil-malh](https://github.com/nil-malh)
 
 
+### ✨ Features
+
+- Update plugin version handling and improve logging — [@nil-malh](https://github.com/nil-malh)
+
+
 ###  New Contributors
 
+- @nil-malh made their first contribution in [#3](https://github.com/ktestify/ktestify-plugin-http/pull/3)
 
 
 
