@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### ✨ Features
+
+- Add support for trusting all SSL certificates in HttpClient configuration — [@nil-malh](https://github.com/nil-malh)
+
+
+### ⬆️ Dependency Updates
+
+- Bump io.github.ktestify:ktestify-core from 1.1.1 to 1.1.2 *(deps)* — [@dependabot[bot]](https://github.com/dependabot[bot])
+
+
+###  New Contributors
+
+
+
 ## [0.1.0] — 2026-09-20
 
 ###  Miscellaneous
