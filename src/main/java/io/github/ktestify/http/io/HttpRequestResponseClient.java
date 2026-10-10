@@ -20,18 +20,25 @@ import io.github.ktestify.exceptions.FetchException;
 import io.github.ktestify.http.config.HttpConfig;
 import io.github.ktestify.io.core.RequestResponseClient;
 import io.github.ktestify.models.ConsumedRecord;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Transport-layer implementation of {@link RequestResponseClient} for HTTP, wrapping {@link HttpClient} exactly as
@@ -80,6 +87,11 @@ public class HttpRequestResponseClient implements RequestResponseClient<HttpRequ
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofMillis(config.getConnectTimeoutMs()))
                 .followRedirects(config.isFollowRedirects() ? HttpClient.Redirect.NORMAL : HttpClient.Redirect.NEVER);
+
+        if (config.isTrustAllCertificates()) {
+            builder.sslContext(buildTrustAllSslContext());
+        }
+
         this.httpClient = builder.build();
         this.readTimeoutMs = config.getReadTimeoutMs();
     }
@@ -187,5 +199,39 @@ public class HttpRequestResponseClient implements RequestResponseClient<HttpRequ
 
     private static String encode(String value) {
         return java.net.URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Builds an {@link SSLContext} that trusts all server certificates. Used when {@code tls.trust-all} is enabled in
+     * the HTTP plugin config — intended for local/development endpoints only.
+     *
+     * @return a trust-all SSLContext
+     */
+    private static SSLContext buildTrustAllSslContext() {
+        try {
+            TrustManager[] trustAllManagers = {
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                }
+            };
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllManagers, new SecureRandom());
+            return sslContext;
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to create trust-all SSL context: " + e.getMessage(), e);
+        }
     }
 }
