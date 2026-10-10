@@ -2,7 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.1] — 2026-10-10
+
 ### ✨ Features
 
 - Add support for trusting all SSL certificates in HttpClient configuration — [@nil-malh](https://github.com/nil-malh)
