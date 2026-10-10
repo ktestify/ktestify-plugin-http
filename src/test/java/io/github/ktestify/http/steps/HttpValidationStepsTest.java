@@ -16,8 +16,6 @@
 
 package io.github.ktestify.http.steps;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.sun.net.httpserver.HttpServer;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistry;
@@ -25,6 +23,9 @@ import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.github.ktestify.config.KtestifyConfig;
 import io.github.ktestify.http.entities.KtestifyHttpEndpoint;
 import io.github.ktestify.models.ConsumedRecord;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -35,12 +36,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Unit tests for {@link HttpValidationSteps}. */
 @DisplayName("HttpValidationSteps")
@@ -207,6 +204,100 @@ class HttpValidationStepsTest {
         }
 
         @Test
+        @DisplayName("supports path placeholder substitution in polling step")
+        void supportsPathPlaceholderSubstitution() throws IOException {
+            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+            server.createContext("/status", exchange -> {
+                byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, body.length);
+                exchange.getResponseBody().write(body);
+                exchange.close();
+            });
+            server.start();
+            try {
+                String baseUrl = "http://localhost:" + server.getAddress().getPort();
+                shared.endpoints.register(
+                        "eventually-api-params",
+                        KtestifyHttpEndpoint.builder()
+                                .endpointAlias("eventually-api-params")
+                                .baseUrl(baseUrl)
+                                .build());
+
+                DataTable dt = buildDataTable(
+                        List.of("endpointAlias", "method", "path", "queryParams", "expectedStatus", "readTimeout"),
+                        List.of("eventually-api-params", "GET", "/status/{id}", "id=ORD-001", "200", "2"));
+
+                assertDoesNotThrow(() -> steps.thenHttpEndpointShouldEventuallyReturn(dt));
+            } finally {
+                server.stop(0);
+            }
+        }
+
+        @Test
+        @DisplayName("throws clear validation error when polling path parameter is missing")
+        void throwsWhenPollingPathParameterMissing() throws IOException {
+            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+            server.createContext("/status", exchange -> {
+                byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, body.length);
+                exchange.getResponseBody().write(body);
+                exchange.close();
+            });
+            server.start();
+            try {
+                String baseUrl = "http://localhost:" + server.getAddress().getPort();
+                shared.endpoints.register(
+                        "eventually-api-missing-param",
+                        KtestifyHttpEndpoint.builder()
+                                .endpointAlias("eventually-api-missing-param")
+                                .baseUrl(baseUrl)
+                                .build());
+
+                DataTable dt = buildDataTable(
+                        List.of("endpointAlias", "method", "path", "queryParams", "expectedStatus", "readTimeout"),
+                        List.of("eventually-api-missing-param", "GET", "/status/{id}", "foo=bar", "200", "2"));
+
+                IllegalArgumentException ex =
+                        assertThrows(IllegalArgumentException.class, () -> steps.thenHttpEndpointShouldEventuallyReturn(dt));
+                assertTrue(ex.getMessage().contains("Missing path parameter 'id'"));
+            } finally {
+                server.stop(0);
+            }
+        }
+
+        @Test
+        @DisplayName("throws clear validation error when polling path template is malformed")
+        void throwsWhenPollingPathTemplateMalformed() throws IOException {
+            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+            server.createContext("/status", exchange -> {
+                byte[] body = "{}".getBytes(StandardCharsets.UTF_8);
+                exchange.sendResponseHeaders(200, body.length);
+                exchange.getResponseBody().write(body);
+                exchange.close();
+            });
+            server.start();
+            try {
+                String baseUrl = "http://localhost:" + server.getAddress().getPort();
+                shared.endpoints.register(
+                        "eventually-api-malformed-path",
+                        KtestifyHttpEndpoint.builder()
+                                .endpointAlias("eventually-api-malformed-path")
+                                .baseUrl(baseUrl)
+                                .build());
+
+                DataTable dt = buildDataTable(
+                        List.of("endpointAlias", "method", "path", "queryParams", "expectedStatus", "readTimeout"),
+                        List.of("eventually-api-malformed-path", "GET", "/status/{id", "id=ORD-001", "200", "2"));
+
+                IllegalArgumentException ex =
+                        assertThrows(IllegalArgumentException.class, () -> steps.thenHttpEndpointShouldEventuallyReturn(dt));
+                assertTrue(ex.getMessage().contains("Malformed path template '/status/{id'"));
+            } finally {
+                server.stop(0);
+            }
+        }
+
+        @Test
         @DisplayName("throws AssertionError when the endpoint never returns the expected status within the timeout")
         void throwsWhenNeverMatches() throws IOException {
             HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
@@ -247,3 +338,4 @@ class HttpValidationStepsTest {
         return DataTable.create(List.of(headers, values), converter);
     }
 }
+

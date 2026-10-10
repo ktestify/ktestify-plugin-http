@@ -22,14 +22,14 @@ import io.github.ktestify.http.entities.KtestifyHttpEndpoint;
 import io.github.ktestify.http.io.HttpRequestSpec;
 import io.github.ktestify.io.inputs.DynamicVariableProcessor;
 import io.github.ktestify.models.ConsumedRecord;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Cucumber {@code @When} step definitions for HTTP actions.
@@ -91,7 +91,7 @@ public class HttpActionSteps {
      */
     @When("HTTP request is sent")
     public void whenHttpRequestIsSent(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
 
         String endpointAlias = getRequired(row, "endpointAlias");
         String method = getRequired(row, "method");
@@ -100,22 +100,25 @@ public class HttpActionSteps {
 
         KtestifyHttpEndpoint endpoint = shared.endpoints.getOrThrow(endpointAlias);
 
-        String url = buildUrl(endpoint.getBaseUrl(), path);
+        HttpUrlResolver.ResolvedUrl resolvedUrl = HttpUrlResolver.resolve(endpoint.getBaseUrl(), path, row.get("queryParams"));
         Map<String, String> headers = buildHeaders(endpoint);
-        Map<String, String> queryParams = parseQueryParams(row.get("queryParams"));
         String body = resolveBody(row);
 
         HttpRequestSpec spec = HttpRequestSpec.builder()
                 .method(method.toUpperCase())
-                .url(url)
+                .url(resolvedUrl.url())
                 .headers(headers)
-                .queryParams(queryParams)
+                .queryParams(resolvedUrl.queryParams())
                 .body(body)
                 .build();
 
-        log.info("Sending HTTP {} request to '{}' (alias '{}')…", method.toUpperCase(), url, endpointAlias);
+        log.info(
+                "Sending HTTP {} request to '{}' (alias '{}')…",
+                method.toUpperCase(),
+                resolvedUrl.url(),
+                endpointAlias);
 
-        ConsumedRecord<String> response = shared.client.execute(spec).get(0);
+        ConsumedRecord<String> response = shared.client.execute(spec).getFirst();
         shared.responses.register(responseAlias, response);
 
         log.info(
@@ -159,42 +162,6 @@ public class HttpActionSteps {
         return headers;
     }
 
-    private static String buildUrl(String baseUrl, String path) {
-        if (path == null || path.isBlank()) {
-            return baseUrl;
-        }
-        boolean baseEndsWithSlash = baseUrl.endsWith("/");
-        boolean pathStartsWithSlash = path.startsWith("/");
-        if (baseEndsWithSlash && pathStartsWithSlash) {
-            return baseUrl + path.substring(1);
-        }
-        if (!baseEndsWithSlash && !pathStartsWithSlash) {
-            return baseUrl + "/" + path;
-        }
-        return baseUrl + path;
-    }
-
-    private static Map<String, String> parseQueryParams(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return Map.of();
-        }
-        Map<String, String> params = new LinkedHashMap<>();
-        Arrays.stream(raw.split(","))
-                .map(String::trim)
-                .filter(s -> !s.isBlank())
-                .forEach(pair -> {
-                    int idx = pair.indexOf('=');
-                    if (idx < 0) {
-                        throw new IllegalArgumentException(
-                                "Malformed queryParams entry '" + pair + "', expected 'key=value'.");
-                    }
-                    params.put(
-                            pair.substring(0, idx).trim(),
-                            pair.substring(idx + 1).trim());
-                });
-        return params;
-    }
-
     private static String getString(Map<String, String> row, String col) {
         String v = row.get(col);
         return (v != null && !v.isBlank()) ? v : null;
@@ -214,3 +181,4 @@ public class HttpActionSteps {
         return Path.of(assetsDir, path).toString();
     }
 }
+
