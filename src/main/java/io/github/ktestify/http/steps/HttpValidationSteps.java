@@ -30,11 +30,12 @@ import io.github.ktestify.match.MatchResult;
 import io.github.ktestify.match.RecordMatcher;
 import io.github.ktestify.match.RecordMatcherFactory;
 import io.github.ktestify.models.ConsumedRecord;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Cucumber {@code @Then} and {@code @And} step definitions for HTTP validations.
@@ -89,7 +90,7 @@ public class HttpValidationSteps {
      */
     @Then("expected HTTP response status")
     public void thenExpectedHttpResponseStatus(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
         ConsumedRecord<String> response = resolveResponse(row);
         String expectedStatus = getRequired(row, "statusCode");
 
@@ -110,7 +111,7 @@ public class HttpValidationSteps {
      */
     @Then("expected HTTP response body from file")
     public void thenExpectedHttpResponseBodyFromFile(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
         assertBodyFromFile(row, RecordMatcherFactory.METHOD_MATCH_FILE, "excludedKeys");
     }
 
@@ -123,7 +124,7 @@ public class HttpValidationSteps {
      */
     @Then("expected HTTP response XML body from file")
     public void thenExpectedHttpResponseXmlBodyFromFile(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
         assertBodyFromFile(row, RecordMatcherFactory.METHOD_MATCH_XML, "excludedElements");
     }
 
@@ -141,7 +142,7 @@ public class HttpValidationSteps {
      */
     @And("HTTP response header should match")
     public void andHttpResponseHeaderShouldMatch(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
         ConsumedRecord<String> response = resolveResponse(row);
         String header = getRequired(row, "header");
         String expectedValue = getRequired(row, "value");
@@ -165,13 +166,13 @@ public class HttpValidationSteps {
      * {@link HttpRequestResponseClient} - no bespoke polling loop is implemented in this class.
      *
      * <p>DataTable columns: {@code endpointAlias}, {@code method}, {@code path}, {@code expectedStatus},
-     * {@code readTimeout} (seconds).
+     * {@code readTimeout} (seconds), optional {@code queryParams}.
      *
      * @param dataTable one-row DataTable
      */
     @Then("HTTP endpoint should eventually return")
     public void thenHttpEndpointShouldEventuallyReturn(DataTable dataTable) {
-        Map<String, String> row = dataTable.asMaps().get(0);
+        Map<String, String> row = dataTable.asMaps().getFirst();
 
         String endpointAlias = getRequired(row, "endpointAlias");
         String method = getRequired(row, "method");
@@ -180,15 +181,17 @@ public class HttpValidationSteps {
         long readTimeoutSeconds = Long.parseLong(getRequired(row, "readTimeout"));
 
         KtestifyHttpEndpoint endpoint = shared.endpoints.getOrThrow(endpointAlias);
-        String url = endpoint.getBaseUrl() + (path.startsWith("/") ? path : "/" + path);
+        HttpUrlResolver.ResolvedUrl resolvedUrl =
+                HttpUrlResolver.resolve(endpoint.getBaseUrl(), path, row.get("queryParams"));
 
         HttpRequestSpec spec = HttpRequestSpec.builder()
                 .method(method.toUpperCase())
-                .url(url)
+                .url(resolvedUrl.url())
                 .headers(
                         endpoint.hasBearerToken()
                                 ? Map.of("Authorization", "Bearer " + endpoint.getBearerToken())
                                 : Collections.emptyMap())
+                .queryParams(resolvedUrl.queryParams())
                 .build();
 
         HttpConsumerContext context = HttpConsumerContext.builder()
@@ -201,13 +204,14 @@ public class HttpValidationSteps {
                 shared.client,
                 records -> !records.isEmpty()
                         && expectedStatus.equals(
-                                records.get(0).getAttributes().get(HttpRequestResponseClient.ATTRIBUTE_STATUS_CODE)),
+                                records.getFirst().getAttributes().get(HttpRequestResponseClient.ATTRIBUTE_STATUS_CODE)),
                 readTimeoutSeconds * 1000L,
                 shared.config.getPollIntervalMs());
 
         boolean passed = new HttpConsumer(context, pollingClient).call();
         if (!passed) {
-            throw new AssertionError("HTTP endpoint '" + endpointAlias + "' (" + method.toUpperCase() + " " + url
+            throw new AssertionError("HTTP endpoint '" + endpointAlias + "' (" + method.toUpperCase() + " "
+                    + resolvedUrl.url()
                     + ") never returned status " + expectedStatus + " within " + readTimeoutSeconds + "s.");
         }
         log.info(
@@ -270,3 +274,4 @@ public class HttpValidationSteps {
         return java.nio.file.Path.of(assetsDir, path).toString();
     }
 }
+

@@ -16,8 +16,6 @@
 
 package io.github.ktestify.http.steps;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.sun.net.httpserver.HttpServer;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.datatable.DataTableTypeRegistry;
@@ -25,6 +23,9 @@ import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
 import io.github.ktestify.config.KtestifyConfig;
 import io.github.ktestify.http.entities.KtestifyHttpEndpoint;
 import io.github.ktestify.models.ConsumedRecord;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -32,12 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Unit tests for {@link HttpActionSteps}, exercised against a local loopback {@link HttpServer}. */
 @DisplayName("HttpActionSteps")
@@ -145,6 +142,44 @@ class HttpActionStepsTest {
         }
 
         @Test
+        @DisplayName("substitutes path placeholders from queryParams and keeps non-path params as query string")
+        void substitutesPathPlaceholders() {
+            DataTable dt = buildDataTable(
+                    List.of("endpointAlias", "method", "path", "queryParams", "responseAlias"),
+                    List.of("test-api", "GET", "/echo/{id}", "id=ORD-001,foo=bar", "my-resp"));
+
+            steps.whenHttpRequestIsSent(dt);
+
+            assertEquals(
+                    baseUrl + "/echo/ORD-001?foo=bar",
+                    shared.responses.getOrThrow("my-resp").getSource());
+        }
+
+        @Test
+        @DisplayName("throws clear validation error when a required path parameter is missing")
+        void throwsWhenPathParameterMissing() {
+            DataTable dt = buildDataTable(
+                    List.of("endpointAlias", "method", "path", "queryParams", "responseAlias"),
+                    List.of("test-api", "GET", "/echo/{id}", "foo=bar", "my-resp"));
+
+            IllegalArgumentException ex =
+                    assertThrows(IllegalArgumentException.class, () -> steps.whenHttpRequestIsSent(dt));
+            assertTrue(ex.getMessage().contains("Missing path parameter 'id'"));
+        }
+
+        @Test
+        @DisplayName("throws clear validation error when the path template is malformed")
+        void throwsWhenPathTemplateMalformed() {
+            DataTable dt = buildDataTable(
+                    List.of("endpointAlias", "method", "path", "queryParams", "responseAlias"),
+                    List.of("test-api", "GET", "/echo/{id", "id=ORD-001", "my-resp"));
+
+            IllegalArgumentException ex =
+                    assertThrows(IllegalArgumentException.class, () -> steps.whenHttpRequestIsSent(dt));
+            assertTrue(ex.getMessage().contains("Malformed path template '/echo/{id'"));
+        }
+
+        @Test
         @DisplayName("adds an Authorization header when the endpoint has a bearer token")
         void addsAuthorizationHeaderWhenBearerTokenPresent() {
             shared.endpoints.register(
@@ -202,3 +237,4 @@ class HttpActionStepsTest {
         return DataTable.create(List.of(headers, values), converter);
     }
 }
+
