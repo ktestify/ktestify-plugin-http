@@ -19,14 +19,14 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.0] — 2026-09-20
 
-###  Miscellaneous
-
-- Update project description and dependency version in pom.xml — [@nil-malh](https://github.com/nil-malh)
-
-
 ### ✨ Features
 
 - Update plugin version handling and improve logging — [@nil-malh](https://github.com/nil-malh)
+
+
+### 🔧 Miscellaneous
+
+- Update project description and dependency version in pom.xml — [@nil-malh](https://github.com/nil-malh)
 
 
 ###  New Contributors
