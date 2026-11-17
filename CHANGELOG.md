@@ -8,6 +8,11 @@ All notable changes to this project will be documented in this file.
 - Implement URL resolution with path parameter substitution and query parameter handling — [@nil-malh](https://github.com/nil-malh)
 
 
+### ⬆️ Dependency Updates
+
+- Bump io.github.ktestify:ktestify-core from 1.2.1 to 1.2.9 *(deps)* — [@dependabot[bot]](https://github.com/dependabot[bot])
+
+
 ## [0.1.1] — 2026-10-10
 
 ### ✨ Features
