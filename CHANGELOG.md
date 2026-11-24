@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
 
 - Bump io.github.ktestify:ktestify-parent from 1.0.6 to 1.0.7 *(deps)* — [@dependabot[bot]](https://github.com/dependabot[bot])
 
+- Bump ktestify-parent to 1.0.8 — [@github-actions[bot]](https://github.com/github-actions[bot])
+
 
 ## [0.1.1] — 2026-10-10
 
