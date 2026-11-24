@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 
 - Bump ktestify-parent to 1.0.8 — [@github-actions[bot]](https://github.com/github-actions[bot])
 
+- Bump ktestify-core to 1.2.10 — [@github-actions[bot]](https://github.com/github-actions[bot])
+
 
 ## [0.1.1] — 2026-10-10
 
